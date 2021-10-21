@@ -19,5 +19,6 @@ diesel migration generate migration_name
 Прогнать миграции
 
 ```
-diesel migration run
+diesel migration run / redo
 ```
+
