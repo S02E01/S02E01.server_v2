@@ -28,7 +28,7 @@ async fn create_user(user: Json<UserRequestData>, state: Data<AppState>) -> impl
     let user = user.into_inner();
 
     match db.send(Create {chat_id: user.chat_id, user_role: user.user_role, create_at: String::from("test")}).await {
-        Ok(Ok(user)) => HttpResponse::Ok().json(user),    
+        Ok(Ok(user)) => HttpResponse::Created().json(user),    
         _ => HttpResponse::InternalServerError().json("Something went wrong")
     }
 }
@@ -54,7 +54,6 @@ async fn main() -> std::io::Result<()> {
     
     let pool =  utils::get_pool(&db_url);
     let db_addr = SyncArbiter::start(5, move || DbActor(pool.clone()));
-
     
     HttpServer::new(move || {
         App::new()
