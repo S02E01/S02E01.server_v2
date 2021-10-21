@@ -3,6 +3,6 @@ table! {
         id -> Int8,
         chat_id -> Int8,
         user_role -> Int4,
-        create_at -> Nullable<Timestamptz>,
+        create_at -> Text,
     }
 }
