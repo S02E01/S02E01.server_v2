@@ -1,60 +1,27 @@
 use actix_web::{
     delete, post, get,
-    web::{Data, Json, Path},
-    HttpResponse, Responder,
+    web::{Json, Path},
+    HttpResponse,
 };
-use crate::models::{AppState, user_models::user::UserRequestData};
-use crate::sql::store::user::{Create, Delete, Get};
+use crate::sql::store::user::{User, NewUser};
+use crate::api::error::ServerError;
 
-/**
- * При валидных данных создает нового пользователя 
- * в БД в таблице `users`
- */
+use serde_json::json;
+
 #[post("/user")]
-pub async fn create_user(user: Json<UserRequestData>, state: Data<AppState>) -> impl Responder {
-    let db = state.as_ref().db.clone();
-    let user = user.into_inner();
-
-    match db.send(Create {
-        chat_id: user.chat_id, 
-        user_role: user.user_role, 
-        create_at: String::from("test"),
-    }).await {
-        Ok(Ok(user)) => HttpResponse::Created().json(user),    
-        _ => HttpResponse::InternalServerError().json("Something went wrong")
-    }
+pub async fn create(user: Json<NewUser>) -> Result<HttpResponse, ServerError> {
+    let user = User::create(user.into_inner())?;
+    Ok(HttpResponse::Ok().json(user))
 }
 
-/**
- * При валидных данных возвращает пользователя 
- * из БД таблицы `users`
- */
 #[get("/user/{chat_id}")]
-pub async fn get_user(Path(chat_id): Path<i64>, state: Data<AppState>) -> impl Responder {
-    let db = state.as_ref().db.clone();
-    
-    match db.send(Get {chat_id}).await {
-        Ok(Ok(user)) => HttpResponse::Ok().json(user),
-        Ok(Err(_)) => {        
-            HttpResponse::NotFound().json({})
-        }, 
-        _ => HttpResponse::InternalServerError().json("Something went wrong")
-    }
+pub async fn find(chat_id: Path<i64>) -> Result<HttpResponse, ServerError> {
+    let user = User::find(chat_id.into_inner())?;
+    Ok(HttpResponse::Ok().json(user))
 }
 
-/**
- * При валидных данных удаляет пользователя 
- * из БД в таблице `users`
- */
-#[delete("user/{chat_id}")]
-pub async fn delete_user(Path(chat_id): Path<i64>, state: Data<AppState>) -> impl Responder {
-    let db = state.as_ref().db.clone();
-
-    match db.send(Delete {chat_id}).await {
-        Ok(Ok(user)) => HttpResponse::Ok().json(user),
-        Ok(Err(_)) =>{         
-            HttpResponse::NotFound().json({})
-        },
-        _ => HttpResponse::InternalServerError().json("Something went wrong")
-    }
+#[delete("/user/{chat_id}")]
+pub async fn delete(chat_id: Path<i64>) -> Result<HttpResponse, ServerError> {
+    User::delete(chat_id.into_inner())?;
+    Ok(HttpResponse::Ok().json(json!({})))
 }

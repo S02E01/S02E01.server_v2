@@ -1,2 +1,4 @@
-mod user;
+pub mod user;
+
 pub mod routes;
+pub mod error;
