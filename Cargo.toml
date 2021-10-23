@@ -14,4 +14,5 @@ diesel = { version = "1.4.8", features = ["uuid", "r2d2", "postgres"] }
 diesel_migrations = "1.4.0"
 derive_more = "0.99.16"
 actix-rt = "2.3.0"
+toml = "0.5.8"
 
