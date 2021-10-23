@@ -1,12 +1,10 @@
 use actix_web::{
     delete, post, get,
     web::{Data, Json, Path},
-     HttpResponse, Responder,
+    HttpResponse, Responder,
 };
 use crate::models::{AppState, user_models::user::UserRequestData};
 use crate::sql::store::user::{Create, Delete, Get};
-
-pub mod user_tests;
 
 /**
  * При валидных данных создает нового пользователя 
@@ -48,7 +46,7 @@ pub async fn get_user(Path(chat_id): Path<i64>, state: Data<AppState>) -> impl R
  * При валидных данных удаляет пользователя 
  * из БД в таблице `users`
  */
-#[delete("user/{chat_id}/delete")]
+#[delete("user/{chat_id}")]
 pub async fn delete_user(Path(chat_id): Path<i64>, state: Data<AppState>) -> impl Responder {
     let db = state.as_ref().db.clone();
 
