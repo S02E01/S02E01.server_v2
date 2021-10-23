@@ -1,0 +1,6 @@
+[server]
+port=4000
+ip="0.0.0.0"
+
+[db]
+dev_url="postgres://architect:password@localhost:5432/architect_dev?sslmode=disable"
