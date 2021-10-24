@@ -7,5 +7,6 @@ pub fn router() -> Scope {
         .service(user::create)
         .service(user::find)
         .service(user::delete)
+        .service(user::update)
 
 }
