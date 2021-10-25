@@ -32,6 +32,11 @@ pub struct NewUser {
     pub role: i32,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct UpdateUser {
+    pub chat_id: i64,
+}
+
 impl User {
     /**
      * Создать запись в таблице `users`
