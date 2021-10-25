@@ -1,6 +1,7 @@
 use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError};
 use diesel::result::Error as DieselError;
+use actix_web::error::Error as ActixError;
 use serde::Deserialize;
 use serde_json::json;
 use std::fmt;
@@ -28,7 +29,8 @@ impl fmt::Display for ServerError {
 }
 
 /**
- * Список реализации методов для кастомных ошибок
+ * Список реализации методов для кастомных 
+ * ошибок при работе с БД
 */
 impl From<DieselError> for ServerError {
     fn from(error: DieselError) -> ServerError {
@@ -51,7 +53,20 @@ impl From<DieselError> for ServerError {
     }
 }
 
+/**
+ * Список реализации методов для кастомных 
+ * ошибок при работе с сервером
+*/
+impl From<ActixError> for ServerError {
+    fn from(error: ActixError) -> ServerError {
+        ServerError::create(500, error.to_string())
+    }
+}
+
 impl ResponseError for ServerError {
+    /**
+     * Метод для формирования ответа сервера при возникновении ошибки
+     */
     fn error_response(&self) -> HttpResponse {
         let status_code = match StatusCode::from_u16(self.status_code) {
             Ok(status_code) => status_code,
@@ -67,6 +82,6 @@ impl ResponseError for ServerError {
         };
 
         HttpResponse::build(status_code)
-        .json(json!({ "message": message }))
+        .json(json!({ "error": message }))
     }
 }
