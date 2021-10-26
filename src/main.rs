@@ -14,8 +14,6 @@ mod api;
 mod schema;
 mod sql;
 
-#[cfg(test)]
-mod tests;
 
 use sql::db;
 
