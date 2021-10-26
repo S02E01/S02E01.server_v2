@@ -25,6 +25,10 @@ pub struct User {
     pub updated_at: Option<NaiveDateTime>,
 }
 
+
+/**
+ * Структура полей пользователя необходимых для взаимодействия
+ */
 #[derive(Serialize, Deserialize, AsChangeset)]
 #[table_name = "users"]
 pub struct NewUser {
@@ -32,9 +36,23 @@ pub struct NewUser {
     pub role: i32,
 }
 
+/**
+ * Ожидаемые входящие параметры для обновления пользователя
+ */
 #[derive(Serialize, Deserialize)]
 pub struct UpdateUser {
     pub chat_id: i64,
+}
+
+/**
+ * Ожидаемые выходные при получении пользователя
+ */
+#[derive(Serialize, Deserialize)]
+pub struct UserData {
+    pub chat_id: i64,
+    pub role: i32,
+    pub created_at: NaiveDateTime,
+    pub updated_at: Option<NaiveDateTime>,
 }
 
 impl User {
