@@ -1,7 +1,9 @@
 use actix_web::web;
 
-mod private;
-mod public;
+pub mod private;
+pub mod public;
+
+mod tests;
 
 
 /**

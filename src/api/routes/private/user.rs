@@ -2,7 +2,7 @@ use crate::api::error::ServerError;
 use crate::sql::store::user_repository::user::{User, UpdateUser};
 use actix_session::Session;
 use actix_web::web::{Json, Path};
-use actix_web::HttpResponse;
+use actix_web::{HttpResponse};
 use actix_web::{delete, get, put};
 use serde_json::json;
 
@@ -19,7 +19,7 @@ pub async fn find(chat_id: Path<i64>, session: Session) -> Result<HttpResponse, 
             let user = User::find(chat_id.into_inner())?;
             Ok(HttpResponse::Ok().json(user))
         } else {
-            Err(ServerError::create(401, "Credentials not valid!".to_string()))
+            Err(ServerError::create(422, "Credentials not valid!".to_string()))
         }
     } else {
         Err(ServerError::create(422, "Unauthorized".to_string()))
