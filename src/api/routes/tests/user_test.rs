@@ -28,7 +28,7 @@ mod tests {
 
         let request_body = json!({
             "chat_id": 11,
-            "role": 2,
+            "role": 1,
         });
 
         let resp = test::TestRequest::post()
@@ -80,22 +80,44 @@ mod tests {
 
         assert_eq!(resp_get_user.status().as_u16(), StatusCode::OK);
 
+        let auth_resp = &resp;
+
         /*
          * ТЕСТИРОВАНИЕ ОБНОВЛЕНИЯ РОЛИ ДЛЯ ВТОРОГО ТЕСТОВОГО ПОЛЬЗОВАТЕЛЯ
          */
 
         let request_body = json!({
             "chat_id": 11,
+            "role": 2,
         });
 
-        let resp_get_user = test::TestRequest::put()
-            .cookie(resp.response().cookies().next().unwrap())
+        let resp = test::TestRequest::put()
+            .cookie(auth_resp.response().cookies().next().unwrap())
             .set_json(&request_body)
             .uri(&format!("/api-v2/user/{}", user.chat_id))
             .send_request(&mut app)
             .await;
 
-        assert_eq!(resp_get_user.status().as_u16(), StatusCode::OK);
-        // let updated_user: UserData = test::read_body_json(resp).await;
+        assert_eq!(resp.status().as_u16(), StatusCode::OK);
+        let updated_user: UserData = test::read_body_json(resp).await;
+
+        assert_eq!(updated_user.role, 2);
+
+        /*
+         * ТЕСТИРОВАНИЕ УДАЛЕНИЯ ВТОРОГО ТЕСТОВОГО ПОЛЬЗОВАТЕЛЯ
+         */
+
+            let request_body = json!({
+                "chat_id": 10,
+            });
+
+           let resp = test::TestRequest::delete()
+           .cookie(auth_resp.response().cookies().next().unwrap())
+           .set_json(&request_body)
+           .uri(&format!("/api-v2/user/{}", user.chat_id))
+           .send_request(&mut app)
+           .await;
+
+           assert_eq!(resp.status().as_u16(), StatusCode::OK);
     }
 }
