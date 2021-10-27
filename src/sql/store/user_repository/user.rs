@@ -40,7 +40,7 @@ pub struct NewUser {
  * Ожидаемые входящие параметры для обновления пользователя
  */
 #[derive(Serialize, Deserialize)]
-pub struct UpdateUser {
+pub struct DeletedUser {
     pub chat_id: i64,
 }
 
@@ -108,12 +108,12 @@ impl User {
     /**
      * Обновить user_role записи в таблице `users`
      */
-    pub fn update(chat_id: i64) -> Result<Self, ServerError> {
+    pub fn update(user: NewUser) -> Result<Self, ServerError> {
         let conn = db::connection()?;
 
         let user = diesel::update(users::table)
-            .filter(users::chat_id.eq(chat_id))
-            .set((role.eq(2), updated_at.eq(Utc::now().naive_utc())))
+            .filter(users::chat_id.eq(user.chat_id))
+            .set((role.eq(user.role), updated_at.eq(Utc::now().naive_utc())))
             .get_result::<User>(&conn)?;
 
         Ok(user)
